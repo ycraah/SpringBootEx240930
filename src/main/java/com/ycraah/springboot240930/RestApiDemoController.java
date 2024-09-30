@@ -1,5 +1,7 @@
 package com.ycraah.springboot240930;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -22,10 +24,20 @@ public class RestApiDemoController {
    */
   public RestApiDemoController() {
     coffees.addAll(List.of(
-       new Coffee("아메리카노"),
+        new Coffee("아메리카노"),
         new Coffee("카페모카"),
         new Coffee("카페라떼"),
         new Coffee("캐러멜마키아토")
     ));
+  }
+
+  /**
+   * @GetMapping은
+   * @RequestMapping(value = "/coffees",  method = RequestMethod.GET)을 생략한 것이다.
+   * HTTP 메서드 타입인 RequestMethod.GET을 추가한다.
+   */
+  @GetMapping("/coffees")
+  Iterable<Coffee> getCoffees() {
+    return coffees;
   }
 }
