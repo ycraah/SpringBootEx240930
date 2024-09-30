@@ -11,7 +11,7 @@ import java.util.Optional;
  */
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/coffees")
 public class RestApiDemoController {
   private List<Coffee> coffees = new ArrayList<>();
 
@@ -35,7 +35,7 @@ public class RestApiDemoController {
    * @GetMapping은 @RequestMapping(value = "/coffees",  method = RequestMethod.GET)을 생략한 것이다.
    * HTTP 메서드 타입인 RequestMethod.GET을 추가한다.
    */
-  @GetMapping("/coffees")
+  @GetMapping
   Iterable<Coffee> getCoffees() {
     return coffees;
   }
@@ -45,7 +45,7 @@ public class RestApiDemoController {
    * 만약 URI 변수와 어노테이션 매개변수와 이름이 다르면 @PathVariable("URI 변수 이름")을 통해 정리할 수 있다.
    */
 
-  @GetMapping("/coffee/{id}")
+  @GetMapping("/{id}")
   /**
    * <<Java의 정석>> p.590~591 참조
    * Optional<T>는 'T타입의 객체'를 감싸는 래퍼 클래스이다. 그래서 Optional타입의 객체에는 모든 타입의 객체를 담을 수 있다.
@@ -67,7 +67,7 @@ public class RestApiDemoController {
    * @RequestBody는 http요청의 본문(body)가 그대로 자바 객체로 변환해서 메서드 파라미터로 전달된다.
    * xml이나 json 기반의 메시지를 사용하는 요청에 유횽하다.
    */
-  @PostMapping("/coffees")
+  @PostMapping
   Coffee postCoffee(@RequestBody Coffee coffee) {
     coffees.add(coffee);
     return coffee;
@@ -77,7 +77,7 @@ public class RestApiDemoController {
    * <<HTTP 완벽 가이드>> p.10
    * PUT은 클라이언트에서 서버로 보낸 데이터를 지정한 이름의 리소스로 저장하라는 의미의 메서드이다.
    */
-  @PutMapping("/coffees/{id}")
+  @PutMapping("/{id}")
   Coffee putCoffee(@PathVariable String id, @RequestBody Coffee coffee) {
     int coffeeIndex = -1;
 
@@ -102,7 +102,7 @@ public class RestApiDemoController {
    * 조건식을 만족하면 요소가 제거한다.
    * 람다식으로 표현이 가능하다
    */
-  @DeleteMapping("/coffee/{id}")
+  @DeleteMapping("/{id}")
   void deleteCoffee(@PathVariable String id) {
     coffees.removeIf(c -> c.getId().equals(id));
   }
