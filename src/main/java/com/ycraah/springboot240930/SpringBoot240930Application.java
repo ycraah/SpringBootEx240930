@@ -17,12 +17,14 @@ public class SpringBoot240930Application {
   }
 }
 
+@Getter
 class Coffee {
   /**
    * final을 통해 한 번만 할당하면 절대 수정 불가능하다.
    * 따라서 변경자 메서드가 없다.
    */
   private final String id;
+  @Setter
   private String name;
 
   public Coffee(String id, String name) {
