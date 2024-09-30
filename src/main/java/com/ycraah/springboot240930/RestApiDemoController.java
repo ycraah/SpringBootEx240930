@@ -1,5 +1,7 @@
 package com.ycraah.springboot240930;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -76,9 +78,14 @@ public class RestApiDemoController {
   /**
    * <<HTTP 완벽 가이드>> p.10
    * PUT은 클라이언트에서 서버로 보낸 데이터를 지정한 이름의 리소스로 저장하라는 의미의 메서드이다.
+   * 참조 : https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/http/ResponseEntity.html
+   * ResponseEntity(T body, HttpStatusCode status)는 데이터와 상태 코드를 반환한다.
+   * HttpStatus.CREATED(201) HttpStatus.OK(200)의 200~206 코드는 성공을 의미한다.
+   *  p.51, p.70 참조 200 OK 요청은 정상이고, 엔터티 본문은 요청된 리소스를 포함하고 있다는 의미이다.
+   *  201 Created는 서버 개체를 생성하라는 요청을 위한 것으로 생성된 리소스에 대한 구체적인 참조가 담긴 헤더와 리소스를 참조할 수 있는 여러 URL을 엔티티 본문에 포함해야한다.
    */
   @PutMapping("/{id}")
-  Coffee putCoffee(@PathVariable String id, @RequestBody Coffee coffee) {
+  ResponseEntity<Coffee> putCoffee(@PathVariable String id, @RequestBody Coffee coffee) {
     int coffeeIndex = -1;
 
     /**
@@ -93,7 +100,7 @@ public class RestApiDemoController {
       }
     }
 
-    return (coffeeIndex == -1) ? postCoffee(coffee) : coffee;
+    return (coffeeIndex == -1) ? new ResponseEntity<>(postCoffee(coffee), HttpStatus.CREATED) : new ResponseEntity<>(coffee, HttpStatus.OK);
   }
 
   /**
