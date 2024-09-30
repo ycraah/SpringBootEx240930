@@ -1,9 +1,6 @@
 package com.ycraah.springboot240930;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +44,7 @@ public class RestApiDemoController {
    * {id}부분은 URI 변수이며, 이 값은 @PathVariable 어노테이션에 달린 id 매개변수를 통해 전달된다.
    * 만약 URI 변수와 어노테이션 매개변수와 이름이 다르면 @PathVariable("URI 변수 이름")을 통해 정리할 수 있다.
    */
+
   @GetMapping("/coffee/{id}")
   /**
    * <<Java의 정석>> p.590~591 참조
@@ -62,5 +60,39 @@ public class RestApiDemoController {
       }
     }
     return Optional.empty();
+  }
+
+  /**
+   * 참조 : https://cheershennah.tistory.com/179
+   * @RequestBody는 http요청의 본문(body)가 그대로 자바 객체로 변환해서 메서드 파라미터로 전달된다.
+   * xml이나 json 기반의 메시지를 사용하는 요청에 유횽하다.
+   */
+  @PostMapping("/coffees")
+  Coffee postCoffee(@RequestBody Coffee coffee) {
+    coffees.add(coffee);
+    return coffee;
+  }
+
+  /**
+   * <<HTTP 완벽 가이드>> p.10
+   * PUT은 클라이언트에서 서버로 보낸 데이터를 지정한 이름의 리소스로 저장하라는 의미의 메서드이다.
+   */
+  @PutMapping("/coffees/{id}")
+  Coffee putCoffee(@PathVariable String id, @RequestBody Coffee coffee) {
+    int coffeeIndex = -1;
+
+    /**
+     * <<Java의 정석>> <ArrayList의 메서드> p.395 참조
+     * int indexOf(Object o)는 지정된 객체가 저장된 위치를 찾아 반환한다.
+     * 아래 코드는 특정 식별자로 커피를 검색하고, 찾으면 업데이트를 한다. 목록에 해당 커피가 없다면 리소스를 만든다.
+     */
+    for (Coffee c : coffees) {
+      if (c.getId().equals(id)) {
+        coffeeIndex = coffees.indexOf(c);
+        coffees.set(coffeeIndex, coffee);
+      }
+    }
+
+    return (coffeeIndex == -1) ? postCoffee(coffee) : coffee;
   }
 }
