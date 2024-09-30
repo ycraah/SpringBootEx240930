@@ -95,4 +95,15 @@ public class RestApiDemoController {
 
     return (coffeeIndex == -1) ? postCoffee(coffee) : coffee;
   }
+
+  /**
+   * 참조 : https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Collection.html#removeIf(java.util.function.Predicate)
+   * ArrayList.removeIf(Predicate<? super E> filter)
+   * 조건식을 만족하면 요소가 제거한다.
+   * 람다식으로 표현이 가능하다
+   */
+  @DeleteMapping("/coffee/{id}")
+  void deleteCoffee(@PathVariable String id) {
+    coffees.removeIf(c -> c.getId().equals(id));
+  }
 }
