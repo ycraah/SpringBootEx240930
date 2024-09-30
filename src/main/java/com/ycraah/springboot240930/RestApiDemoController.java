@@ -32,8 +32,7 @@ public class RestApiDemoController {
   }
 
   /**
-   * @GetMapping은
-   * @RequestMapping(value = "/coffees",  method = RequestMethod.GET)을 생략한 것이다.
+   * @GetMapping은 @RequestMapping(value = "/coffees",  method = RequestMethod.GET)을 생략한 것이다.
    * HTTP 메서드 타입인 RequestMethod.GET을 추가한다.
    */
   @GetMapping("/coffees")
