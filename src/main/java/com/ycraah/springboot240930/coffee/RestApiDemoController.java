@@ -1,4 +1,4 @@
-package com.ycraah.springboot240930;
+package com.ycraah.springboot240930.coffee;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * @RestController은 @Controller와 @ResponseBody를 합쳐 쓴 것이다.
+ * '@RestController'은 @Controller와 @ResponseBody를 합쳐 쓴 것이다.
  */
 
 @RestController
 @RequestMapping("/coffees")
 public class RestApiDemoController {
-  private List<Coffee> coffees = new ArrayList<>();
+  private final CoffeeRepository coffeeRepository;
 
   /**
    * <<이것이 자바다>> <수정할 수 없는 컬렉션> p.684 참조
@@ -24,8 +24,9 @@ public class RestApiDemoController {
    * <<Java의 정석>> <ArrayList의 메서드> p.395 참조
    * boolean addAll(Collection c) : 주어진 컬렉션의 모든 객체를 저장한다.
    */
-  public RestApiDemoController() {
-    coffees.addAll(List.of(
+  public RestApiDemoController(CoffeeRepository coffeeRepository) {
+    this.coffeeRepository = coffeeRepository;
+    this.coffeeRepository.saveAll(List.of(
         new Coffee("아메리카노"),
         new Coffee("카페모카"),
         new Coffee("카페라떼"),
@@ -34,12 +35,12 @@ public class RestApiDemoController {
   }
 
   /**
-   * @GetMapping은 @RequestMapping(value = "/coffees",  method = RequestMethod.GET)을 생략한 것이다.
+   * '@GetMapping'은 @RequestMapping(value = "/coffees",  method = RequestMethod.GET)을 생략한 것이다.
    * HTTP 메서드 타입인 RequestMethod.GET을 추가한다.
    */
   @GetMapping
   Iterable<Coffee> getCoffees() {
-    return coffees;
+    return coffeeRepository.findAll();
   }
 
   /**
@@ -56,12 +57,7 @@ public class RestApiDemoController {
    * empty()를 통해 참조변수 값을 초기화할 수 있다.
    */
   Optional<Coffee> getCoffeeById(@PathVariable String id) {
-    for (Coffee c : coffees) {
-      if (c.getId().equals(id)) {
-        return Optional.of(c);
-      }
-    }
-    return Optional.empty();
+    return coffeeRepository.findById(id);
   }
 
   /**
@@ -71,8 +67,7 @@ public class RestApiDemoController {
    */
   @PostMapping
   Coffee postCoffee(@RequestBody Coffee coffee) {
-    coffees.add(coffee);
-    return coffee;
+    return coffeeRepository.save(coffee);
   }
 
   /**
@@ -86,31 +81,11 @@ public class RestApiDemoController {
    */
   @PutMapping("/{id}")
   ResponseEntity<Coffee> putCoffee(@PathVariable String id, @RequestBody Coffee coffee) {
-    int coffeeIndex = -1;
-
-    /**
-     * <<Java의 정석>> <ArrayList의 메서드> p.395 참조
-     * int indexOf(Object o)는 지정된 객체가 저장된 위치를 찾아 반환한다.
-     * 아래 코드는 특정 식별자로 커피를 검색하고, 찾으면 업데이트를 한다. 목록에 해당 커피가 없다면 리소스를 만든다.
-     */
-    for (Coffee c : coffees) {
-      if (c.getId().equals(id)) {
-        coffeeIndex = coffees.indexOf(c);
-        coffees.set(coffeeIndex, coffee);
-      }
-    }
-
-    return (coffeeIndex == -1) ? new ResponseEntity<>(postCoffee(coffee), HttpStatus.CREATED) : new ResponseEntity<>(coffee, HttpStatus.OK);
+    return (coffeeRepository.existsById(id)) ? new ResponseEntity<>(postCoffee(coffee), HttpStatus.CREATED) : new ResponseEntity<>(coffee, HttpStatus.OK);
   }
 
-  /**
-   * 참조 : https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Collection.html#removeIf(java.util.function.Predicate)
-   * ArrayList.removeIf(Predicate<? super E> filter)
-   * 조건식을 만족하면 요소가 제거한다.
-   * 람다식으로 표현이 가능하다
-   */
   @DeleteMapping("/{id}")
   void deleteCoffee(@PathVariable String id) {
-    coffees.removeIf(c -> c.getId().equals(id));
+    coffeeRepository.deleteById(id);
   }
 }
