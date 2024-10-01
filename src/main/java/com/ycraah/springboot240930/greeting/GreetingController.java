@@ -1,6 +1,8 @@
 package com.ycraah.springboot240930.greeting;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,11 +16,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/greeting")
 public class GreetingController {
-  @Value("${greeting-name:Mirage}")
-  private String name;
+  private final Greeting greeting;
+
+  public GreetingController(Greeting greeting) {
+    this.greeting = greeting;
+  }
 
   @GetMapping
   String getGreeting() {
-    return name;
+    return greeting.getName();
+  }
+
+  @GetMapping("/coffee")
+  String getNameAndCoffee(){
+    return greeting.getCoffee();
   }
 }
